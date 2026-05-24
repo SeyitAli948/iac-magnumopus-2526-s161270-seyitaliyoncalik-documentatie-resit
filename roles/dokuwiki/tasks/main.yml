@@ -1,0 +1,76 @@
+---
+- name: Install required packages
+  dnf:
+    name:
+      - wget
+      - tar
+    state: present
+
+- name: Create web directory
+  file:
+    path: "{{ dokuwiki_dir }}"
+    state: directory
+    owner: "{{ dokuwiki_owner }}"
+    group: "{{ dokuwiki_group }}"
+    mode: '0755'
+
+- name: Download DokuWiki
+  get_url:
+    url: "{{ dokuwiki_url }}"
+    dest: /tmp/dokuwiki.tgz
+
+- name: Extract DokuWiki
+  unarchive:
+    src: /tmp/dokuwiki.tgz
+    dest: /var/www/
+    remote_src: yes
+
+- name: Extract DokuWiki properly
+  unarchive:
+    src: /tmp/dokuwiki.tgz
+    dest: /var/www/
+    remote_src: yes
+    creates: "{{ dokuwiki_dir }}/doku.php"
+
+- name: Set permissions
+  file:
+    path: "{{ dokuwiki_dir }}"
+    owner: "{{ dokuwiki_owner }}"
+    group: "{{ dokuwiki_group }}"
+    recurse: yes
+
+- name: Create local config
+  template:
+    src: local.php.j2
+    dest: "{{ dokuwiki_dir }}/conf/local.php"
+    owner: "{{ dokuwiki_owner }}"
+    group: "{{ dokuwiki_group }}"
+    mode: '0644'
+
+- name: Create install lock
+  file:
+    path: "{{ dokuwiki_dir }}/conf/.install.lock"
+    state: touch
+
+- name: Fix permissions
+  file:
+    path: "{{ dokuwiki_dir }}"
+    recurse: yes
+    owner: "{{ dokuwiki_owner }}"
+    group: "{{ dokuwiki_group }}"
+
+- name: Ensure correct directory name
+  file:
+    path: "{{ dokuwiki_dir }}"
+    state: directory
+    owner: "{{ dokuwiki_owner }}"
+    group: "{{ dokuwiki_group }}"
+
+- name: Create admin user file
+  copy:
+    dest: "{{ dokuwiki_dir }}/conf/users.auth.php"
+    content: |
+      admin:$1$admin$Xqv8examplehash:Admin:admin@example.com:admin,user
+    owner: "{{ dokuwiki_owner }}"
+    group: "{{ dokuwiki_group }}"
+    mode: '0644'

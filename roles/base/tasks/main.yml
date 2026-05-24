@@ -1,0 +1,14 @@
+---
+# tasks file for roles/base
+- name: Update all packages
+  dnf:
+    name: "*"
+    state: latest
+
+- name: Install basic tools
+  dnf:
+    name:
+      - curl
+      - vim
+      - wget
+    state: present

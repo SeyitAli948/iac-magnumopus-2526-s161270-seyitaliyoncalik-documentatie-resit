@@ -1,0 +1,8 @@
+- name: Base server setup
+  hosts: wiki
+  become: true
+
+  roles:
+    - base
+    - webserver
+    - dokuwiki

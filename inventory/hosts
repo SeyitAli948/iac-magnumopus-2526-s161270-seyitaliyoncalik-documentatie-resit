@@ -1,0 +1,2 @@
+[wiki]
+localhost ansible_connection=local
