@@ -1,13 +1,13 @@
 ---
 - name: Install required packages
-  dnf:
+  ansible.builtin.dnf:
     name:
       - wget
       - tar
     state: present
 
 - name: Create web directory
-  file:
+  ansible.builtin.file:
     path: "{{ dokuwiki_dir }}"
     state: directory
     owner: "{{ dokuwiki_owner }}"
@@ -15,32 +15,27 @@
     mode: '0755'
 
 - name: Download DokuWiki
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ dokuwiki_url }}"
     dest: /tmp/dokuwiki.tgz
-
-- name: Extract DokuWiki
-  unarchive:
-    src: /tmp/dokuwiki.tgz
-    dest: /var/www/
-    remote_src: yes
+    mode: '0644'
 
 - name: Extract DokuWiki properly
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/dokuwiki.tgz
     dest: /var/www/
-    remote_src: yes
+    remote_src: true
     creates: "{{ dokuwiki_dir }}/doku.php"
 
 - name: Set permissions
-  file:
+  ansible.builtin.file:
     path: "{{ dokuwiki_dir }}"
     owner: "{{ dokuwiki_owner }}"
     group: "{{ dokuwiki_group }}"
-    recurse: yes
+    recurse: true
 
 - name: Create local config
-  template:
+  ansible.builtin.template:
     src: local.php.j2
     dest: "{{ dokuwiki_dir }}/conf/local.php"
     owner: "{{ dokuwiki_owner }}"
@@ -48,29 +43,34 @@
     mode: '0644'
 
 - name: Create install lock
-  file:
+  ansible.builtin.file:
     path: "{{ dokuwiki_dir }}/conf/.install.lock"
     state: touch
+    modification_time: preserve
+    access_time: preserve
+    mode: '0644'
 
 - name: Fix permissions
-  file:
+  ansible.builtin.file:
     path: "{{ dokuwiki_dir }}"
-    recurse: yes
+    recurse: true
     owner: "{{ dokuwiki_owner }}"
     group: "{{ dokuwiki_group }}"
 
 - name: Ensure correct directory name
-  file:
+  ansible.builtin.file:
     path: "{{ dokuwiki_dir }}"
     state: directory
     owner: "{{ dokuwiki_owner }}"
     group: "{{ dokuwiki_group }}"
+    mode: '0755'
 
 - name: Create admin user file
-  copy:
+  ansible.builtin.copy:
     dest: "{{ dokuwiki_dir }}/conf/users.auth.php"
     content: |
-      admin:$1$admin$Xqv8examplehash:Admin:admin@example.com:admin,user
+      admin:$2y$10$0s.U07Ui1xIaj5y5xgYNoOC1XzqSdmI2y3rEx9p87FsfM.deXMa9S:Admin:admin@example.com:admin,user
     owner: "{{ dokuwiki_owner }}"
     group: "{{ dokuwiki_group }}"
     mode: '0644'
+    force: false

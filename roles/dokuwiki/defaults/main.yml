@@ -1,8 +1,3 @@
 ---
-dokuwiki_version: "stable"
-dokuwiki_url: "https://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz"
-dokuwiki_dir: "/var/www/dokuwiki/dokuwiki-2025-05-14b"
-dokuwiki_owner: "apache"
-dokuwiki_group: "apache"
-dokuwiki_title: "Magnum Opus Wiki"
-dokuwiki_admin_user: "admin"
+# Default variables for the DokuWiki role.
+# Site-specific configuration is defined in group_vars/wiki.yml.

@@ -1,14 +1,56 @@
 ---
 # tasks file for roles/base
-- name: Update all packages
-  dnf:
-    name: "*"
-    state: latest
-
 - name: Install basic tools
-  dnf:
+  ansible.builtin.dnf:
     name:
       - curl
       - vim
       - wget
     state: present
+
+- name: Allow HTTP
+  ansible.posix.firewalld:
+    service: http
+    zone: public
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Allow SSH
+  ansible.posix.firewalld:
+    service: ssh
+    zone: public
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Remove Cockpit from firewall
+  ansible.posix.firewalld:
+    service: cockpit
+    zone: public
+    permanent: true
+    immediate: true
+    state: disabled
+
+- name: Remove port 8080 from firewall
+  ansible.posix.firewalld:
+    port: 8080/tcp
+    zone: public
+    permanent: true
+    immediate: true
+    state: disabled
+
+- name: Remove port 9090 from firewall
+  ansible.posix.firewalld:
+    port: 9090/tcp
+    zone: public
+    permanent: true
+    immediate: true
+    state: disabled
+
+- name: Enable firewalld denied logging
+  ansible.builtin.lineinfile:
+    path: /etc/firewalld/firewalld.conf
+    regexp: '^LogDenied='
+    line: 'LogDenied=all'
+  notify: Restart firewalld

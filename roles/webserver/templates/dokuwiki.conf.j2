@@ -1,0 +1,13 @@
+<VirtualHost *:80>
+    ServerName localhost
+
+    DocumentRoot {{ dokuwiki_dir }}
+
+    <Directory {{ dokuwiki_dir }}>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/dokuwiki_error.log
+    CustomLog /var/log/httpd/dokuwiki_access.log combined
+</VirtualHost>

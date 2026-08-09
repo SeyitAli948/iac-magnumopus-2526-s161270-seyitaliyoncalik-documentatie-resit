@@ -1,19 +1,28 @@
 ---
 # tasks file for roles/webserver
 - name: Install Apache
-  dnf:
+  ansible.builtin.dnf:
     name: httpd
     state: present
 
 - name: Install PHP
-  dnf:
+  ansible.builtin.dnf:
     name:
       - php
       - php-cli
     state: present
 
-- name: Start Apache
-  service:
+- name: Configure Apache for DokuWiki
+  ansible.builtin.template:
+    src: dokuwiki.conf.j2
+    dest: /etc/httpd/conf.d/dokuwiki.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache
+
+- name: Ensure Apache is enabled and running
+  ansible.builtin.service:
     name: httpd
     state: started
     enabled: true
