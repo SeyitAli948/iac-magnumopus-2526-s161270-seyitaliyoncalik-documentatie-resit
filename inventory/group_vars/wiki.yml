@@ -1,4 +1,4 @@
-dokuwiki_dir: /var/www/dokuwiki/dokuwiki-2025-05-14b
+dokuwiki_dir: /var/www/dokuwiki
 dokuwiki_group: apache
 dokuwiki_owner: apache
 dokuwiki_title: Magnum Opus Wiki

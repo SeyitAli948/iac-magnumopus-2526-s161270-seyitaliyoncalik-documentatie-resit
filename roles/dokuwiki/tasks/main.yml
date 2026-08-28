@@ -23,8 +23,10 @@
 - name: Extract DokuWiki properly
   ansible.builtin.unarchive:
     src: /tmp/dokuwiki.tgz
-    dest: /var/www/
+    dest: "{{ dokuwiki_dir }}"
     remote_src: true
+    extra_opts:
+      - --strip-components=1
     creates: "{{ dokuwiki_dir }}/doku.php"
 
 - name: Set permissions
